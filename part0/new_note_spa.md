@@ -1,3 +1,5 @@
+# 0.6: New note in Single page app diagram
+
 ```mermaid
 sequenceDiagram
   participant browser
