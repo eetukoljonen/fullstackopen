@@ -42,7 +42,7 @@ const Statistics = ({good, neutral, bad, allRatings}) => {
 		<p>good {good}</p>
 		<p>neutral {neutral}</p>
 		<p>bad {bad}</p>
-		<p>all {allRatings.length}</p>
+		<p>all {length}</p>
 		<p>average {average}</p>
 		<p>positive {positive} %</p>
 	</>
