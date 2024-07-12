@@ -8,6 +8,8 @@ const Button = ({handleClick, text}) => (
 
 const Anecdote = ({text}) => <p>{text}</p>
 
+const Vote = ({votes}) => <p>has {votes} votes</p>
+
 const App = () => {
 	const anecdotes = [
 		'If it hurts, do it more often.',
@@ -21,13 +23,23 @@ const App = () => {
 	]
 
 	const [selected, setSelected] = useState(0)
+	const [points, setPoints] = useState(new Uint8Array(8))
 
 	const selectRandom = () => setSelected(Math.floor(Math.random() * 8))
+
+	const incrementVote = () => {
+		const copy = [...points]
+		copy[selected] += 1
+		setPoints(copy)
+	}
 
 	return (
 	<div>
 		<Anecdote text={anecdotes[selected]} />
+		<Vote votes={points[selected]} />
+		<Button handleClick={incrementVote} text='vote' />
 		<Button handleClick={selectRandom} text='next anecdote' />
+
 	</div>
 	)
 }
