@@ -17,8 +17,9 @@ const StatisticLine = ({text, value}) => (
 	</tr>
 )
 
-const Statistics = ({good, neutral, bad, allRatings}) => {
-	if (allRatings.length ===0) {
+const Statistics = ({good, neutral, bad}) => {
+	const total = good * 1 + bad * -1
+	if (total ===0) {
 		return(
 			<>
 				<h1>statistics</h1>
@@ -26,18 +27,9 @@ const Statistics = ({good, neutral, bad, allRatings}) => {
 			</>
 		)
 	}
-
-	const numOfGood = allRatings.filter((rating) => rating === 1).length
-	const length = allRatings.length
-	const calculateTotal = (array) => {
-		let total = 0
-		array.forEach((element) => {
-			total += element
-		})
-		return (total)
-	}
-	const average = (calculateTotal(allRatings) / length).toFixed(2)
-	const positive = (numOfGood / length * 100).toFixed(1)
+	const length = good + neutral + bad
+	const average = (total / length).toFixed(1)
+	const positive = (good / length * 100).toFixed(1)
 	return(
 	<>
 		<Header text={'statistics'}/>
@@ -59,21 +51,17 @@ const App = () => {
 	const [good, setGood] = useState(0)
 	const [neutral, setNeutral] = useState(0)
 	const [bad, setBad] = useState(0)
-	const [allRatings, setRatings] = useState([])
 
 	const incrementGood = () => {
 		setGood(good + 1)
-		setRatings(allRatings.concat(1))
 	}
 
 	const incrementBad = () => {
 		setBad(bad + 1)
-		setRatings(allRatings.concat(-1))
 	}
 
 	const incrementNeutral = () => {
 		setNeutral(neutral + 1)
-		setRatings(allRatings.concat(0))
 	}
 
 	return (
@@ -82,7 +70,7 @@ const App = () => {
 		<Button handleClick={incrementGood} text={'good'} />
 		<Button handleClick={incrementNeutral} text={'neutral'} />
 		<Button handleClick={incrementBad} text={'bad'} />
-		<Statistics good={good} neutral={neutral} bad={bad} allRatings={allRatings} />
+		<Statistics good={good} neutral={neutral} bad={bad} />
 	</div>
 	)
 }
