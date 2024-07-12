@@ -36,7 +36,7 @@ const Statistics = ({good, neutral, bad, allRatings}) => {
 		})
 		return (total)
 	}
-	const average = calculateTotal(allRatings) / length
+	const average = (calculateTotal(allRatings) / length).toFixed(2)
 	const positive = (numOfGood / length * 100).toFixed(1)
 	return(
 	<>
@@ -47,6 +47,7 @@ const Statistics = ({good, neutral, bad, allRatings}) => {
 				<StatisticLine text="neutral" value={neutral} />
 				<StatisticLine text="bad" value={bad} />
 				<StatisticLine text="all" value={length} />
+				<StatisticLine text="average" value={average} />
 				<StatisticLine text="positive" value={positive + '%'} />
 			</tbody>
 		</table>
