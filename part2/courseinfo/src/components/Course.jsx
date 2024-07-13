@@ -30,7 +30,6 @@ const Total = ({parts}) => {
 	)
 }
 
-
 const Course = ({course}) => {
 	return (
 		<>
