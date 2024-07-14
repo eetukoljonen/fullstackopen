@@ -59,7 +59,13 @@ const App = () => {
 					setNewNumber('')
 					showNotification(`Changed ${returnedPerson.name} number to ${returnedPerson.number}`, 'success')
 
-			})
+				})
+				.catch(error => {
+					setPersons(persons.filter(person => person.id !== existingPerson.id))
+					setNewName('')
+					setNewNumber('')
+					showNotification(`Information of ${existingPerson.name} has already been removed from server`, 'error')
+				})
 			}
 			return ;
 		}
