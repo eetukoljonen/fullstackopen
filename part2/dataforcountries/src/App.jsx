@@ -31,7 +31,7 @@ function App() {
 	return (
 		<div>
 			<Filter filter={filter} handleFilterChange={handleFilterChange} />
-			<Countries handleShowClick={handleShowClick} countries={country ? country : filtered}/>
+			<Countries filter={filter} handleShowClick={handleShowClick} countries={country ? country : filtered}/>
 		</div>
 	)
 }
