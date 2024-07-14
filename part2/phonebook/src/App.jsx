@@ -27,8 +27,8 @@ const App = () => {
 	const hook = () => {
 		personService
 			.getAll()
-			.then(initiallPersons => {
-				setPersons(initiallPersons)
+			.then(initialPersons => {
+				setPersons(initialPersons)
 			})
 	}
 
