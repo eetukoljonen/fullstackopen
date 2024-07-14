@@ -4,11 +4,25 @@ import Filter from './components/Filter'
 import Persons from './components/Persons'
 import personService from './services/persons'
 
+const Notification = ({ message, className }) => {
+	if (message === null) {
+		return null
+	}
+
+	return (
+		<div className={className}>
+			{message}
+		</div>
+	)
+}
+
 const App = () => {
 	const [persons, setPersons] = useState([])
 	const [newName, setNewName] = useState('')
 	const [newNumber, setNewNumber] = useState('')
 	const [filter, setFilter] = useState('')
+	const [notification, setNotification] = useState('')
+	const [className, setClassName] = useState('')
 
 	const hook = () => {
 		personService
@@ -19,6 +33,14 @@ const App = () => {
 	}
 
 	useEffect(hook, [])
+
+	const showNotification = (msg, className) => {
+		setClassName(className)
+		setNotification(msg)
+		setTimeout(() => {
+			setNotification(null)
+		}, 5000)
+	}
 
 	const addNewContact = (event) => {
 		event.preventDefault()
@@ -35,6 +57,8 @@ const App = () => {
 					setPersons(persons.map(person => person.id === existingPerson.id ? returnedPerson : person))
 					setNewName('')
 					setNewNumber('')
+					showNotification(`Changed ${returnedPerson.name} number to ${returnedPerson.number}`, 'success')
+
 			})
 			}
 			return ;
@@ -46,6 +70,7 @@ const App = () => {
 				setPersons(persons.concat(returnedPerson))
 				setNewName('')
 				setNewNumber('')
+				showNotification(`Added ${returnedPerson.name}`, 'success')
 			})
 	}
 
@@ -67,6 +92,7 @@ const App = () => {
 				.deletePerson(id)
 				.then(deletedPerson => {
 					setPersons(persons.filter(person => person.id !== id))
+					showNotification(`Deleted ${deletedPerson.name}`, 'success')
 				})
 		}
 	}
@@ -74,10 +100,11 @@ const App = () => {
 	const filtered = filter
 		? persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
 		: persons
-
+	
 	return (
 		<div>
 			<h2>Phonebook</h2>
+			<Notification message={notification} className={className}/>
 			<Filter filter={filter} handleFilterChange={handleFilterChange} />
 			<h2>add a new</h2>
 			<PersonForm
