@@ -5,7 +5,6 @@ const Country = ({country, weather}) => {
 	if (!weather)
 		return null
 	const iconUrl = `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`
-	console.log(weather)
 	return(
 		<div>
 			<h1>{country.name.common}</h1>
@@ -37,7 +36,6 @@ const Countries = ({filter, countries, handleShowClick}) => {
 			const country = countries[0];
 			weatherService.getWeather(country.capital, country.name.area)
 				.then(weatherData => setWeather(weatherData))
-				.catch(error => console.error('Error fetching weather:', error));
 		}
 	}, [filter])
 	if (countries.length > 10)
