@@ -93,3 +93,37 @@ describe('favorite blog', () => {
     assert.strictEqual(result.likes, 7)
   })
 })
+
+describe('most blog', () => {
+  test('big list', () => {
+    const result = listHelper.mostBlog(blogs)
+    assert.strictEqual(result.author, 'Robert C. Martin')
+  })
+
+  test('empty list', () => {
+    const result = listHelper.mostBlog([])
+    assert.strictEqual(result, undefined)
+  })
+
+  test('only one blog', () => {
+    const result = listHelper.mostBlog([blogs[0]])
+    assert.strictEqual(result.author, 'Michael Chan')
+  })
+})
+
+describe('most likes', () => {
+  test('big list', () => {
+    const result = listHelper.mostLikes(blogs)
+    assert.strictEqual(result.author, 'Edsger W. Dijkstra')
+  })
+
+  test('empty list', () => {
+    const result = listHelper.mostLikes([])
+    assert.strictEqual(result, undefined)
+  })
+
+  test('only one blog', () => {
+    const result = listHelper.mostLikes([blogs[0]])
+    assert.strictEqual(result.author, 'Michael Chan')
+  })
+})
