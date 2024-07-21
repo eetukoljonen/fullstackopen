@@ -80,6 +80,17 @@ test('a blog without likes section', async () => {
   assert.strictEqual(addedBlog.likes, 0);
 })
 
+test('an invalid blog cant be added', async () => {
+  const newBlog = {
+    author: 'Albert Einstein'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
