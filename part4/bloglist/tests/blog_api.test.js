@@ -107,6 +107,53 @@ test('can delete a specific blog', async () => {
   assert(!titles.includes(blogToDelete.title))
 })
 
+test('can update a specific blog', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToUpdate = blogsAtStart[0]
+
+  const updatedBlog = {
+    title: blogToUpdate.title,
+    author: blogToUpdate.author,
+    url: blogToUpdate.url,
+    likes: blogToUpdate.likes + 1
+  }
+
+  const response = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedBlog)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+  
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+
+  const returnedBlog = response.body
+  assert.strictEqual(returnedBlog.likes, updatedBlog.likes)
+})
+
+test('cannot update a specific blog with a valid non existing id', async () => {
+  const validNonexistingId = await helper.nonExistingId()
+
+  const updatedBlog = {
+    title: 'trying to update this',
+    author: 'Michael Chan',
+    url: 'https://reactpatterns.com/'
+  }
+
+  await api
+    .put(`/api/blogs/${validNonexistingId.id}`)
+    .send(updatedBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+  
+  const blogsAtEnd = await helper.blogsInDb()
+
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+
+  const titles = blogsAtEnd.map(blog => blog.title)
+  assert(!titles.includes(updatedBlog.title))
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
