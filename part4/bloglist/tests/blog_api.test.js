@@ -26,6 +26,16 @@ test('there are right amount of blogs', async () => {
   assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
+test('identifier is id and not _id', async () => {
+  const response = await api.get('/api/blogs')
+  const blogs = response.body
+
+  blogs.forEach(blog => {
+    assert(blog.id !== undefined, 'id field is not defined');
+    assert(blog._id === undefined, '_id field should not be defined');
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
