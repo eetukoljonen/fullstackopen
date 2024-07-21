@@ -21,9 +21,9 @@ test('blogs are returned as json', async () => {
 })
 
 test('there are right amount of blogs', async () => {
-  const response = await api.get('/api/blogs')
+  const blogs = await helper.blogsInDb()
 
-  assert.strictEqual(response.body.length, helper.initialBlogs.length)
+  assert.strictEqual(blogs.length, helper.initialBlogs.length)
 })
 
 test('identifier is id and not _id', async () => {
@@ -36,12 +36,34 @@ test('identifier is id and not _id', async () => {
   })
 })
 
-test('a valid blog can be added ', async () => {
+test('a valid blog can be added', async () => {
   const newBlog = {
     title: 'test_title',
     author: 'test_author',
     url: 'test_url',
     likes: 10
+  }
+  
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogs = await helper.blogsInDb()
+
+  const titles = blogs.map(r => r.title)
+
+  assert.strictEqual(blogs.length, helper.initialBlogs.length + 1)
+
+  assert(titles.includes('test_title'))
+})
+
+test('a blog without likes section', async () => {
+  const newBlog = {
+    title: 'test_title1',
+    author: 'test_author1',
+    url: 'test_url1'
   }
 
   await api
@@ -50,13 +72,12 @@ test('a valid blog can be added ', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/blogs')
+  const blogs = await helper.blogsInDb()
 
-  const titles = response.body.map(r => r.title)
+  assert.strictEqual(blogs.length, helper.initialBlogs.length + 1)
 
-  assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
-
-  assert(titles.includes('test_title'))
+  const addedBlog = blogs.find(blog => blog.title === 'test_title1');
+  assert.strictEqual(addedBlog.likes, 0);
 })
 
 after(async () => {
