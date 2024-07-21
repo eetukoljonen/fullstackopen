@@ -38,10 +38,10 @@ test('identifier is id and not _id', async () => {
 
 test('a valid blog can be added', async () => {
   const newBlog = {
-    title: 'test_title',
-    author: 'test_author',
-    url: 'test_url',
-    likes: 10
+    title: 'The Future of Artificial Intelligence',
+    author: 'Dr. Alan Turing',
+    url: 'https://ai-future.tech/blog/future-of-ai',
+    likes: 42
   }
   
   await api
@@ -56,14 +56,14 @@ test('a valid blog can be added', async () => {
 
   assert.strictEqual(blogs.length, helper.initialBlogs.length + 1)
 
-  assert(titles.includes('test_title'))
+  assert(titles.includes('The Future of Artificial Intelligence'))
 })
 
 test('a blog without likes section', async () => {
   const newBlog = {
-    title: 'test_title1',
-    author: 'test_author1',
-    url: 'test_url1'
+    title: 'Mastering the Art of Sourdough Baking',
+    author: 'Julia Child',
+    url: 'https://bakingmasters.com/sourdough-secrets'
   }
 
   await api
@@ -76,7 +76,7 @@ test('a blog without likes section', async () => {
 
   assert.strictEqual(blogs.length, helper.initialBlogs.length + 1)
 
-  const addedBlog = blogs.find(blog => blog.title === 'test_title1');
+  const addedBlog = blogs.find(blog => blog.title === 'Mastering the Art of Sourdough Baking');
   assert.strictEqual(addedBlog.likes, 0);
 })
 
