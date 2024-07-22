@@ -3,14 +3,20 @@ const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const app = require('../app')
 const helper = require('./test_helper')
+const bcrypt = require('bcrypt')
 
 const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash('sekret', 10)
+  const user = new User({ username: 'test_user', passwordHash })
+  await user.save()
 })
 
 test('blogs are returned as json', async () => {
@@ -44,8 +50,17 @@ test('a valid blog can be added', async () => {
     likes: 42
   }
   
+  const loginResponse = await api
+    .post('/api/login')
+    .send({ username: "test_user", password: "sekret" })
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+  
+  const token = loginResponse.body.token
+
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -66,8 +81,17 @@ test('a blog without likes section', async () => {
     url: 'https://bakingmasters.com/sourdough-secrets'
   }
 
+  const loginResponse = await api
+    .post('/api/login')
+    .send({ username: "test_user", password: "sekret" })
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+  
+  const token = loginResponse.body.token
+
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -85,8 +109,17 @@ test('an invalid blog cant be added', async () => {
     author: 'Albert Einstein'
   }
 
+  const loginResponse = await api
+    .post('/api/login')
+    .send({ username: "test_user", password: "sekret" })
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+  
+  const token = loginResponse.body.token
+
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(400)
 })
