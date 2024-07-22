@@ -61,6 +61,89 @@ describe('when there is initially one user at db', () => {
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
+
+  test('creation fails with proper status code and message if username is invalid', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const invalidUser = {
+      username: 'ok',
+      name: 'test user',
+      password: 'testpw',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(invalidUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('is shorter than the minimum allowed length (3)'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test('creation fails with proper status code and message if password is invalid', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const invalidUser = {
+      username: 'test_user',
+      name: 'test user',
+      password: 'ok',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(invalidUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('password too short'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test('creation fails with proper status code and message if password is not defined', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const invalidUser = {
+      username: 'test_user',
+      name: 'test user'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(invalidUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('password required'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test('creation fails with proper status code and message if username is not defined', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const invalidUser = {
+      name: 'test user',
+      password: 'testpw',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(invalidUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('`username` is required'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
 })
 
 after(async () => {
