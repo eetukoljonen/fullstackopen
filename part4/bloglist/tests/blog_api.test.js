@@ -230,6 +230,54 @@ test('cannot update a specific blog with a valid non existing id', async () => {
 
   const titles = blogsAtEnd.map(blog => blog.title)
   assert(!titles.includes(updatedBlog.title))
+
+})
+
+test('a valid blog cannot be added without a token', async () => {
+  const newBlog = {
+    title: 'The Future of Artificial Intelligence',
+    author: 'Dr. Alan Turing',
+    url: 'https://ai-future.tech/blog/future-of-ai',
+    likes: 42
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+    .expect('Content-Type', /application\/json/)
+
+  const blogs = await helper.blogsInDb()
+
+  const titles = blogs.map(r => r.title)
+
+  assert.strictEqual(blogs.length, helper.initialBlogs.length)
+
+  assert(!titles.includes('The Future of Artificial Intelligence'))
+})
+
+test('a valid blog cannot be added with an invalid token', async () => {
+  const newBlog = {
+    title: 'The Future of Artificial Intelligence',
+    author: 'Dr. Alan Turing',
+    url: 'https://ai-future.tech/blog/future-of-ai',
+    likes: 42
+  }
+
+  await api
+    .post('/api/blogs')
+    .set('Authorization', 'Bearer thiswontwork')
+    .send(newBlog)
+    .expect(401)
+    .expect('Content-Type', /application\/json/)
+
+  const blogs = await helper.blogsInDb()
+
+  const titles = blogs.map(r => r.title)
+
+  assert.strictEqual(blogs.length, helper.initialBlogs.length)
+
+  assert(!titles.includes('The Future of Artificial Intelligence'))
 })
 
 after(async () => {
