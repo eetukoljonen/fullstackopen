@@ -124,20 +124,65 @@ test('an invalid blog cant be added', async () => {
     .expect(400)
 })
 
-test('can delete a specific blog', async () => {
+test('cannot delete someone elses blog', async () => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToDelete = blogsAtStart[0]
 
+  const loginResponse = await api
+    .post('/api/login')
+    .send({ username: "test_user", password: "sekret" })
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+  
+  const token = loginResponse.body.token
+
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
-    .expect(204)
+    .set('Authorization', `Bearer ${token}`)
+    .expect(401)
   
   const blogsAtEnd = await helper.blogsInDb()
 
-  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
 
   const titles = blogsAtEnd.map(blog => blog.title)
-  assert(!titles.includes(blogToDelete.title))
+  assert(titles.includes(blogToDelete.title))
+})
+
+test('can delete self created blog', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const newBlog = {
+    title: 'The Future of Artificial Intelligence',
+    author: 'Dr. Alan Turing',
+    url: 'https://ai-future.tech/blog/future-of-ai',
+    likes: 42
+  }
+  
+  const loginResponse = await api
+    .post('/api/login')
+    .send({ username: "test_user", password: "sekret" })
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+  
+  const token = loginResponse.body.token
+
+  const createBlogResponse = await api
+    .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAfterCreation = await helper.blogsInDb()
+  assert.strictEqual(blogsAtStart.length + 1, blogsAfterCreation.length)
+
+  await api
+    .delete(`/api/blogs/${createBlogResponse.body.id}`)
+    .set('Authorization', `Bearer ${token}`)
+    .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtStart.length, blogsAtEnd.length)
 })
 
 test('can update a specific blog', async () => {
