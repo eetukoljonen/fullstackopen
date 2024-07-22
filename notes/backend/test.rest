@@ -5,10 +5,12 @@ GET http://localhost:3001/api/notes
 
 POST http://localhost:3001/api/notes
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RfdXNlciIsImlkIjoiNjY5ZTRlN2RiZDNlMjE3OWM0MjgyNmFjIiwiaWF0IjoxNzIxNjU3Njk0fQ.jA8gNjcG2er8KoUdYhzYTihe6YK0W86pGYR0e6EQUYw
 
 {
-    "content": "test note",
-    "important": true
+    "content": "test note1",
+    "important": true,
+    "userId": "669e4e7dbd3e2179c42826ac"
 }
 
 ###
@@ -27,4 +29,25 @@ Content-Type: application/json
 {
     "content": "HTML is easy",
     "important": true
+}
+
+###
+
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "test_user",
+    "name": "testname",
+    "password": "testisalis"
+}
+
+###
+
+POST http://localhost:3001/api/login
+Content-Type: application/json
+
+{
+    "username": "test_user",
+    "password": "testisalis"
 }
