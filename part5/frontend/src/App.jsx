@@ -3,7 +3,18 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
-const LoginForm = ({ setUser}) => {
+const Notification = ({ message, className }) => {
+	if (message === null) {
+		return null
+	}
+	return (
+		<div className={className}>
+			{message}
+		</div>
+	)
+}
+
+const LoginForm = ({ setUser, showNotification}) => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
 
@@ -20,8 +31,9 @@ const LoginForm = ({ setUser}) => {
       setUser(user)
       setUsername('')
       setPassword('')
+      showNotification('You are now logged in', 'success')
     } catch (exception) {
-      console.error('error')
+      showNotification('wrong username or password', 'error')
     }
   }
 
@@ -53,7 +65,7 @@ const LoginForm = ({ setUser}) => {
   )
 }
 
-const CreateBlogForm = ({blogs, setBlogs}) => {
+const CreateBlogForm = ({blogs, setBlogs, showNotification}) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -71,8 +83,9 @@ const CreateBlogForm = ({blogs, setBlogs}) => {
       setTitle('')
       setAuthor('')
       setUrl('')
+      showNotification(`a new blog ${returnedBlog.title} by ${returnedBlog.author}`, 'success')
     } catch (error) {
-      console.error(error)
+      showNotification('something went wrong when creating the blog', 'error')
     }
   }
 
@@ -116,6 +129,8 @@ const CreateBlogForm = ({blogs, setBlogs}) => {
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
+  const [notification, setNotification] = useState('')
+	const [className, setClassName] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -132,21 +147,35 @@ const App = () => {
     }
   }, [])
 
-  const logOut = () => {
-    setUser(null)
-    window.localStorage.removeItem('loggedUser')
+  const showNotification = (msg, className) => {
+    setClassName(className)
+    setNotification(msg)
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
   }
+
+  const logOut = () => {
+    window.localStorage.removeItem('loggedUser')
+    showNotification('You are now logged out', 'success')
+    setUser(null)
+  }
+
 
   if (!user) {
     return (
-      <LoginForm setUser={setUser} />
+      <div>
+        <Notification message={notification} className={className}/>
+        <LoginForm setUser={setUser} showNotification={showNotification} />
+      </div>
     )
   }
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={notification} className={className}/>
       <p>{user.name} logged in  <button onClick={logOut}>log out</button></p>
-      <CreateBlogForm blogs={blogs} setBlogs={setBlogs} />
+      <CreateBlogForm blogs={blogs} setBlogs={setBlogs} showNotification={showNotification} />
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
