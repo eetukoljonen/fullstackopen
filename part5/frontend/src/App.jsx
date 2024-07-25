@@ -6,24 +6,24 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 const Notification = ({ message, className }) => {
-	if (message === null) {
-		return null
-	}
-	return (
-		<div className={className}>
-			{message}
-		</div>
-	)
+  if (message === null) {
+    return null
+  }
+  return (
+    <div className={className}>
+      {message}
+    </div>
+  )
 }
 
-const LoginForm = ({ setUser, showNotification}) => {
-  const [username, setUsername] = useState('') 
+const LoginForm = ({ setUser, showNotification }) => {
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginService.login({
         username, password,
@@ -45,7 +45,7 @@ const LoginForm = ({ setUser, showNotification}) => {
       <form onSubmit={handleLogin}>
         <div>
           username
-            <input
+          <input
             type="text"
             value={username}
             name="Username"
@@ -54,7 +54,7 @@ const LoginForm = ({ setUser, showNotification}) => {
         </div>
         <div>
           password
-            <input
+          <input
             type="password"
             value={password}
             name="Password"
@@ -71,7 +71,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState('')
-	const [className, setClassName] = useState('')
+  const [className, setClassName] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
