@@ -28,14 +28,14 @@ const Blog = ({ blog, updateBlog }) => {
     <>
       {blog.url}  <br />
       likes {blog.likes} <button onClick={likeBlog}>like</button> <br />
-      {blog.author}
+      {blog.user.name}
     </>
   )
 
   return (
     <div style={blogStyle}>
       <div>
-        {blog.title} <button onClick={() => setVisible(!visible)}>{buttonLabel}</button>  <br />
+        {blog.title} {blog.author} <button onClick={() => setVisible(!visible)}>{buttonLabel}</button>  <br />
         {visible && showRest()}
       </div>  
     </div>
