@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -65,67 +67,6 @@ const LoginForm = ({ setUser, showNotification}) => {
   )
 }
 
-const CreateBlogForm = ({blogs, setBlogs, showNotification}) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-
-  const createBlog = async (event) => {
-    event.preventDefault()
-    const newBlog = {
-      title: title,
-      author: author,
-      url: url
-    }
-    try {
-      const returnedBlog = await blogService.create(newBlog)
-      setBlogs(blogs.concat(returnedBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-      showNotification(`a new blog ${returnedBlog.title} by ${returnedBlog.author}`, 'success')
-    } catch (error) {
-      showNotification('something went wrong when creating the blog', 'error')
-    }
-  }
-
-  return (
-    <div>
-      <h2>create new</h2>
-      <form onSubmit={createBlog}>
-        <div>
-          title:
-            <input
-            type="text"
-            value={title}
-            name="title"
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div>
-          author:
-            <input
-            type="text"
-            value={author}
-            name="author"
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          url:
-            <input
-            type="text"
-            value={url}
-            name="url"
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <button type="submit">create</button>
-      </form>
-    </div>
-  )
-}
-
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
@@ -161,6 +102,18 @@ const App = () => {
     setUser(null)
   }
 
+  const blogFormRef = useRef()
+
+  const addBlog = async (newBlog) => {
+    try {
+      const returnedBlog = await blogService.create(newBlog)
+      setBlogs(blogs.concat(returnedBlog))
+      showNotification(`a new blog ${returnedBlog.title} by ${returnedBlog.author}`, 'success')
+      blogFormRef.current.toggleVisibility()
+    } catch (error) {
+      showNotification('something went wrong when creating the blog', 'error')
+    }
+  }
 
   if (!user) {
     return (
@@ -175,7 +128,9 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={notification} className={className}/>
       <p>{user.name} logged in  <button onClick={logOut}>log out</button></p>
-      <CreateBlogForm blogs={blogs} setBlogs={setBlogs} showNotification={showNotification} />
+      <Togglable buttonLabel='new blog' ref={blogFormRef} >
+        <BlogForm addBlog={addBlog} />
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
