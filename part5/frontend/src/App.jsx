@@ -115,6 +115,16 @@ const App = () => {
     }
   }
 
+  const updateBlog = async (updatedBlog, id) => {
+    try {
+      const returnedBlog = await blogService.update(updatedBlog, id)
+      setBlogs(blogs.map(blog => blog.id === id ? returnedBlog : blog))
+      showNotification(`you have liked the blog: ${returnedBlog.title} by ${returnedBlog.author}`, 'success')
+    } catch (error) {
+      showNotification('something went wrong with liking the blog', 'error')
+    }
+  }
+
   if (!user) {
     return (
       <div>
@@ -132,7 +142,7 @@ const App = () => {
         <BlogForm addBlog={addBlog} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </div>
   )
