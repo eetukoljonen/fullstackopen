@@ -13,7 +13,7 @@ const BlogForm = ({ addBlog }) => {
       author: author,
       url: url
     }
-    addBlog(newBlog)
+    await addBlog(newBlog)
     setTitle('')
     setAuthor('')
     setUrl('')
@@ -56,7 +56,7 @@ const BlogForm = ({ addBlog }) => {
   )
 }
 
-BlogForm.PropTypes = {
+BlogForm.propTypes = {
   addBlog : PropTypes.func.isRequired
 }
 
