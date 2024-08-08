@@ -51,5 +51,17 @@ describe('Blog app', () => {
       await page.getByRole('button', { name: 'like' }).click()
       await expect(page.getByText('likes 1')).toBeVisible()
     })
+
+    test('a blog can be deleted by the creator', async ({ page }) => {
+      await createBlog(page, 'title with playwright', 'author with playwright', 'url.playwright.fi')
+      await expect(page.getByText('title with playwright author with playwright')).toBeVisible()
+
+      await page.getByRole('button', { name: 'view' }).click()
+      await page.on('dialog', async dialog => await dialog.accept())
+      await page.getByRole('button', { name: 'remove' }).click()
+      
+      await expect(page.getByText('Deletion success')).toBeVisible()
+      await expect(page.getByText('title with playwright author with playwright')).toBeHidden()
+    })
   })
 })

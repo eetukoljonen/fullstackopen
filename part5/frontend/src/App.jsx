@@ -135,7 +135,7 @@ const App = () => {
         setBlogs(blogs.filter(blog => blog.id !== id))
         showNotification('Deletion success', 'success')
       } catch (error) {
-        showNotification('You cannot someone elses blog', 'error')
+        showNotification('You cannot remove someone elses blog', 'error')
       }
     }
   }
