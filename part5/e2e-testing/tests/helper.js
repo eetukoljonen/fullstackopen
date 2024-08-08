@@ -13,4 +13,14 @@ const createBlog = async (page, title, author, url) => {
   await page.getByText('title with playwright author with playwright').waitFor()
 }
 
-export { loginWith, createBlog }
+const createUser = async (request, name, username, password) => {
+  await request.post('/api/users', {
+    data: {
+      name: name,
+      username: username,
+      password: password
+    }
+  })
+}
+
+export { loginWith, createBlog, createUser }
