@@ -10,7 +10,7 @@ const createBlog = async (page, title, author, url) => {
   await page.getByTestId('author').fill(author)
   await page.getByTestId('url').fill(url)
   await page.getByRole('button', { name: 'create' }).click()
-  await page.getByText('title with playwright author with playwright').waitFor()
+  await page.getByText(`${title}  ${author}`).waitFor()
 }
 
 const createUser = async (request, name, username, password) => {

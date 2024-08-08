@@ -77,5 +77,44 @@ describe('Blog app', () => {
       await page.getByRole('button', { name: 'view' }).click()
       await expect(page.getByRole('button', { name: 'remove' })).toBeHidden()
     })
-  })
+
+    test('blogs get sorted by likes', async ({ page }) => {
+      // creating three blogs
+      for (let i = 0; i < 3; i++) {
+        await createBlog(page, 'title' + i, 'author' + i, 'url' + i)
+      }
+      // ensuring all blogs are visible and all have zero likes
+      for (let i = 0; i < 3; i++) {
+        const blog = await page.getByText(`title${i.toString()} author${i.toString()}`)
+        const blogParent = await blog.locator('..')
+        await expect(blog).toBeVisible()
+        await blogParent.getByRole('button', { name: 'view' }).click()
+        await expect(blogParent.getByText('likes 0')).toBeVisible()
+      }
+
+      // liking each post a random amount of times between 3 to 20 likes and storing
+      // the order into an array
+      const sortedLikes = []
+      for (let i = 0; i < 3; i++) {
+        const blog = await page.getByText(`title${i.toString()} author${i.toString()}`)
+        const blogParent = await blog.locator('..')
+        const likes = Math.floor(Math.random() * (20 - 3) + 3)
+        const likeString = likes.toString()
+        sortedLikes.push(likes)
+        for (let currentLikes = 0; currentLikes < likes; currentLikes++) {
+          await blogParent.getByRole('button', { name: 'like' }).click()
+          await blogParent.getByText(`likes ${currentLikes + 1}`).waitFor()
+        }
+        await expect(blogParent.getByText(`likes ${likeString}`)).toBeVisible() 
+      }
+
+      // sorting the like array and comparing the order to be same
+      sortedLikes.sort((a, b) => (a - b) * -1)
+      const blogLikes = await page.getByText('likes', { exact: false }).all()
+      for (let i = 0; i < 3; i++) {
+        const blogParent = await blogLikes[i].locator('..')
+        await expect(blogParent.getByText(`likes ${sortedLikes[i]}`)).toBeVisible() 
+      }
+    })
+  })  
 })
