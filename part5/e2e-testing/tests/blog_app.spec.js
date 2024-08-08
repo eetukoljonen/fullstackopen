@@ -79,12 +79,10 @@ describe('Blog app', () => {
     })
 
     test('blogs get sorted by likes', async ({ page }) => {
-      // creating three blogs
+      // creating three blogs and ensuring all blogs are visible and all have zero likes
       for (let i = 0; i < 3; i++) {
         await createBlog(page, 'title' + i, 'author' + i, 'url' + i)
-      }
-      // ensuring all blogs are visible and all have zero likes
-      for (let i = 0; i < 3; i++) {
+        
         const blog = await page.getByText(`title${i.toString()} author${i.toString()}`)
         const blogParent = await blog.locator('..')
         await expect(blog).toBeVisible()
