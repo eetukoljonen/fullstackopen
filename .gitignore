@@ -2,3 +2,5 @@
 .env
 node_modules
 .eslintrc.cjs
+counter
+notes_redux
