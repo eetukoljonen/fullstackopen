@@ -5,3 +5,4 @@ node_modules
 counter
 notes_redux
 query-notes
+notes-router
